@@ -13,10 +13,13 @@ class DbLoader:
         self.DATA_URL = "https://raw.githubusercontent.com/David-Haim/CountriesToCitiesJSON/master/countriesToCities.json"
         self.gui = gui
         self.country_id = self.NO_COUNTRY_ID
+        self.db_directory = os.path.join(sys.path[0], 'data')
+        if not os.path.exists(self.db_directory):
+            os.makedirs(self.db_directory)
 
     def open_connection(self):
         self.conn = sqlite3.connect(
-            os.path.join(sys.path[0], 'data', 'cities.db'))
+            os.path.join(self.db_directory, 'cities.db'))
         self.cur = self.conn.cursor()
 
     def close_connection(self):
