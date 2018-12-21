@@ -58,12 +58,14 @@ class DbLoader:
             self.create_tables()
             country_id = 1;
             for country in js:
-                self.cur.execute('INSERT INTO countries VALUES (?, ?)',
-                            (country_id, country))
-                for city in js[country]:
-                    self.cur.execute('INSERT INTO cities VALUES(?, ?)',
-                                (city, country_id))
-                country_id += 1
+                if country != '':
+                    self.cur.execute('INSERT INTO countries VALUES (?, ?)',
+                                (country_id, country))
+                    for city in js[country]:
+                        if city != '':
+                            self.cur.execute('INSERT INTO cities VALUES(?, ?)',
+                                        (city, country_id))
+                    country_id += 1
             self.conn.commit()
             self.add_countries_to_model()
             gobject.idle_add(self.gui.show_data)

@@ -35,6 +35,8 @@ class Gui(gtk.Window):
         self.countries_store = gtk.ListStore(gtk.gdk.Pixbuf, str, int)
         tv_countries = self.create_tree_view()
         tv_countries.set_model(self.countries_store)
+        selection = tv_countries.get_selection()
+        selection.connect("changed", self.countries_selection_changed)
         sw_countries = self.create_scrolled_window()
         sw_countries.add(tv_countries)
         self.fr_countries = gtk.Frame("Countries")
@@ -114,8 +116,7 @@ class Gui(gtk.Window):
         self.vb_load_db_error.show()
 
     def add_to_countries_model(self, title, country_id):
-        if title != '':
-            self.countries_store.append([self.COUNTRY_ICON, title, country_id])
+        self.countries_store.append([self.COUNTRY_ICON, title, country_id])
 
     def add_to_cities_model(self, title):
         self.cities_store.append([self.CITY_ICON, title])
@@ -123,5 +124,15 @@ class Gui(gtk.Window):
     def load_countries(self):
         task = AsyncTask(self.db_loader)
         task.start()
+
+    def load_cities(self, country_id):
+        self.db_loader.country_id = country_id
+        task = AsyncTask(self.db_loader)
+        task.start()
         
-    
+    def countries_selection_changed(self, selection):
+        model, countries_iter = selection.get_selected()
+        values = model.get(countries_iter, 2)
+        self.cities_store.clear()
+        self.load_cities(values[0])
+        
