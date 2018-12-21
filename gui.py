@@ -46,6 +46,7 @@ class Gui(gtk.Window):
         self.cities_store = gtk.ListStore(gtk.gdk.Pixbuf, str)
         tv_cities = self.create_tree_view()
         tv_cities.set_model(self.cities_store)
+        tv_cities.connect("row-activated", self.on_cities_activated)
         sw_cities = self.create_scrolled_window()
         sw_cities.add(tv_cities)
         fr_cities = gtk.Frame("Cities")
@@ -135,4 +136,9 @@ class Gui(gtk.Window):
         values = model.get(countries_iter, 2)
         self.cities_store.clear()
         self.load_cities(values[0])
+
+    def on_cities_activated(self, treeview, path, view_column):
+        cities_iter = self.cities_store.get_iter(path)
+        values = self.cities_store.get(cities_iter, 1)
+        print values[0]
         

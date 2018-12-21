@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import threading
 
 class AsyncTask(threading.Thread):
