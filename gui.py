@@ -32,9 +32,9 @@ class Gui(gtk.Window):
         tv_cities.set_model(cities_store)
         sw_cities = self.create_scrolled_window()
         sw_cities.add(tv_cities)
-        self.fr_cities = gtk.Frame("Cities")
-        self.fr_cities.add(sw_cities)
-        self.fr_cities.show_all()
+        fr_cities = gtk.Frame("Cities")
+        fr_cities.add(sw_cities)
+        fr_cities.show_all()
         
         btn_load_db_error = gtk.Button("Retry")
         btn_load_db_error.connect("clicked", self.btn_load_db_error_clicked)
@@ -44,13 +44,15 @@ class Gui(gtk.Window):
         
         hbox = gtk.HBox(False, 5)
         hbox.pack_start(self.sp_load_db, True, False, 1)
-        hbox.pack_start(self.fr_countries, True, True, 5)
-        hbox.pack_start(self.fr_cities, True, True, 5)
         hbox.pack_start(self.vb_load_db_error, True, False, 1)
-
+        hbox.pack_start(self.fr_countries, True, True, 5)
+        hbox.pack_start(fr_cities, True, True, 5)
+    
         self.add(hbox)
         hbox.show()
         self.show()
+
+        self.show_loading_indicator()
 
     def create_tree_view(self):
         tree_view = gtk.TreeView()
@@ -83,14 +85,12 @@ class Gui(gtk.Window):
         self.sp_load_db.show()
         self.sp_load_db.start()
         self.fr_countries.hide()
-        self.fr_cities.hide()
         self.vb_load_db_error.hide()
 
     def show_data(self):
         self.sp_load_db.hide()
         self.sp_load_db.stop()
         self.fr_countries.show()
-        self.fr_cities.show()
 
     def show_error(self):
         self.sp_load_db.hide()
