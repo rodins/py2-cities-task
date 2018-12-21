@@ -4,6 +4,12 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
+import os
+import sys
+
+from async_task import AsyncTask
+from db_loader import DbLoader
+
 class Gui(gtk.Window):
     def __init__(self):
         super(Gui, self).__init__()
@@ -13,23 +19,31 @@ class Gui(gtk.Window):
         self.set_border_width(5)
         self.set_size_request(780, 400)
         #TODO: set application image
+        try:
+            self.COUNTRY_ICON = gtk.gdk.pixbuf_new_from_file(
+                os.path.join(sys.path[0], "images", "countries-16.png"))
+
+            self.CITY_ICON = gtk.gdk.pixbuf_new_from_file(
+                os.path.join(sys.path[0], "images", "city-16.png"))
+        except Exception, e:
+            print e.message
         self.set_title("Cities info")
 
         self.sp_load_db = gtk.Spinner()
         self.sp_load_db.set_size_request(self.SPINNER_SIZE, self.SPINNER_SIZE)
 
-        countries_store = gtk.ListStore(gtk.gdk.Pixbuf, str, int)
+        self.countries_store = gtk.ListStore(gtk.gdk.Pixbuf, str, int)
         tv_countries = self.create_tree_view()
-        tv_countries.set_model(countries_store)
+        tv_countries.set_model(self.countries_store)
         sw_countries = self.create_scrolled_window()
         sw_countries.add(tv_countries)
         self.fr_countries = gtk.Frame("Countries")
         self.fr_countries.add(sw_countries)
         self.fr_countries.show_all()
 
-        cities_store = gtk.ListStore(gtk.gdk.Pixbuf, str)
+        self.cities_store = gtk.ListStore(gtk.gdk.Pixbuf, str)
         tv_cities = self.create_tree_view()
-        tv_cities.set_model(cities_store)
+        tv_cities.set_model(self.cities_store)
         sw_cities = self.create_scrolled_window()
         sw_cities.add(tv_cities)
         fr_cities = gtk.Frame("Cities")
@@ -52,7 +66,8 @@ class Gui(gtk.Window):
         hbox.show()
         self.show()
 
-        self.show_loading_indicator()
+        self.db_loader = DbLoader(self)
+        self.load_countries()
 
     def create_tree_view(self):
         tree_view = gtk.TreeView()
@@ -73,7 +88,7 @@ class Gui(gtk.Window):
         gtk.main_quit()
         
     def btn_load_db_error_clicked(self, widget):
-        print "Retry load db"
+        self.load_counries()
 
     def create_scrolled_window(self):
         scrolled_window = gtk.ScrolledWindow()
@@ -95,5 +110,18 @@ class Gui(gtk.Window):
     def show_error(self):
         self.sp_load_db.hide()
         self.sp_load_db.stop()
+        self.fr_countries.hide()
         self.vb_load_db_error.show()
+
+    def add_to_countries_model(self, title, country_id):
+        if title != '':
+            self.countries_store.append([self.COUNTRY_ICON, title, country_id])
+
+    def add_to_cities_model(self, title):
+        self.cities_store.append([self.CITY_ICON, title])
+
+    def load_countries(self):
+        task = AsyncTask(self.db_loader)
+        task.start()
+        
     
