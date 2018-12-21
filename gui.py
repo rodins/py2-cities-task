@@ -59,11 +59,28 @@ class Gui(gtk.Window):
         self.vb_load_db_error = gtk.VBox(False, 1)
         self.vb_load_db_error.pack_start(btn_load_db_error, True, False, 10)
         
+        sp_info = gtk.Spinner()
+        sp_info.set_size_request(self.SPINNER_SIZE, self.SPINNER_SIZE)
+        lb_info = gtk.Label("No info")
+        lb_info.show()
+        btn_info_error = gtk.Button("Retry")
+        
+        vb_info = gtk.VBox(False, 1)
+        vb_info.pack_start(sp_info, True, False, 1)
+        vb_info.pack_start(lb_info, True, True, 1)
+        vb_info.pack_start(btn_info_error, True, False, 10)
+        vb_info.show()
+        
+        fr_info = gtk.Frame("Info")
+        fr_info.add(vb_info)
+        fr_info.show()
+        
         hbox = gtk.HBox(False, 5)
         hbox.pack_start(self.sp_load_db, True, False, 1)
         hbox.pack_start(self.vb_load_db_error, True, False, 1)
         hbox.pack_start(self.fr_countries, True, True, 5)
         hbox.pack_start(fr_cities, True, True, 5)
+        hbox.pack_start(fr_info, True, True, 5)
     
         self.add(hbox)
         hbox.show()
