@@ -59,16 +59,17 @@ class Gui(gtk.Window):
         self.vb_load_db_error = gtk.VBox(False, 1)
         self.vb_load_db_error.pack_start(btn_load_db_error, True, False, 10)
         
-        sp_info = gtk.Spinner()
-        sp_info.set_size_request(self.SPINNER_SIZE, self.SPINNER_SIZE)
-        lb_info = gtk.Label("No info")
-        lb_info.show()
-        btn_info_error = gtk.Button("Retry")
+        self.sp_info = gtk.Spinner()
+        self.sp_info.set_size_request(self.SPINNER_SIZE, self.SPINNER_SIZE)
+        self.lb_info = gtk.Label("No info")
+        self.lb_info.show()
+        self.btn_info_error = gtk.Button("Retry")
+        self.btn_info_error.connect("clicked", self.btn_info_error_clicked)
         
         vb_info = gtk.VBox(False, 1)
-        vb_info.pack_start(sp_info, True, False, 1)
-        vb_info.pack_start(lb_info, True, True, 1)
-        vb_info.pack_start(btn_info_error, True, False, 10)
+        vb_info.pack_start(self.sp_info, True, False, 1)
+        vb_info.pack_start(self.lb_info, True, True, 1)
+        vb_info.pack_start(self.btn_info_error, True, False, 1)
         vb_info.show()
         
         fr_info = gtk.Frame("Info")
@@ -158,4 +159,26 @@ class Gui(gtk.Window):
         cities_iter = self.cities_store.get_iter(path)
         values = self.cities_store.get(cities_iter, 1)
         print values[0]
+
+    def show_info_loading_indicator(self):
+        self.sp_info.show()
+        self.sp_info.start()
+        self.lb_info.hide()
+        self.btn_info_error.hide()
+
+    def show_info_data(self):
+        self.sp_info.hide()
+        self.sp_info.stop()
+        self.lb_info.show()
+        self.btn_info_error.hide()
+
+    def show_info_error(self):
+        self.sp_info.hide()
+        self.sp_info.stop()
+        self.lb_info.hide()
+        self.btn_info_error.show()
+
+    def btn_info_error_clicked(self, widget):
+        print "Info error"
+        
         
