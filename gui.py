@@ -50,7 +50,6 @@ class Gui(gtk.Window):
         vb_countries.show()
         
         fr_countries = gtk.Frame("Countries")
-        fr_countries.set_size_request(LIST_SIZE, -1)
         fr_countries.add(vb_countries)
         fr_countries.show()
 
@@ -61,11 +60,11 @@ class Gui(gtk.Window):
         sw_cities = self.create_scrolled_window()
         sw_cities.add(tv_cities)
         fr_cities = gtk.Frame("Cities")
-        fr_cities.set_size_request(LIST_SIZE, -1)
         fr_cities.add(sw_cities)
         fr_cities.show_all()
 
         vb_left = gtk.VBox(False, 1)
+        vb_left.set_size_request(LIST_SIZE, -1)
         vb_left.pack_start(fr_countries, False, False, 1)
         vb_left.pack_start(fr_cities, True, True, 1)
         vb_left.show()
