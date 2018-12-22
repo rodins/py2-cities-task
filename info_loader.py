@@ -4,6 +4,7 @@ import gobject
 import urllib
 import urllib2
 import json
+from xml.sax import saxutils
 
 class InfoLoader:
     def __init__(self, gui):
@@ -42,6 +43,6 @@ class InfoLoader:
             title = item['title']
             # City name should be first in title
             if title.find(self.city) == 0:
-                return '<b>' + title + '</b> \n\n <i>' + item['summary'] + '</i>'
+                return '<b>' + saxutils.escape(title) + '</b> \n\n <i>' + saxutils.escape(item['summary'])+ '</i>'
         return "No info"
         
