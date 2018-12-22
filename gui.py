@@ -37,6 +37,7 @@ class Gui(gtk.Window):
 
         self.countries_store = gtk.ListStore(gtk.gdk.Pixbuf, str, int)
         self.cb_countries = self.create_combo_box(self.countries_store)
+        self.cb_countries.connect("changed", self.cb_countries_changed)
         self.cb_countries.show()
 
         self.btn_countries_error = gtk.Button("Retry")
@@ -128,7 +129,6 @@ class Gui(gtk.Window):
 
         return combo_box
         
-
     def on_destroy(self, widget):
         gtk.main_quit()
         
@@ -182,9 +182,9 @@ class Gui(gtk.Window):
         task = AsyncTask(self.info_loader)
         task.start()
         
-    def countries_selection_changed(self, selection):
-        model, countries_iter = selection.get_selected()
-        values = model.get(countries_iter, 1, 2)
+    def cb_countries_changed(self, combobox):
+        countries_iter = combobox.get_active_iter()
+        values = self.countries_store.get(countries_iter, 1, 2)
         self.info_loader.country = values[0]
         self.cities_store.clear()
         self.load_cities(values[1]) # pass country_id
