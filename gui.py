@@ -32,20 +32,26 @@ class Gui(gtk.Window):
             print e.message
         self.set_title("Cities info")
 
-        self.sp_load_db = gtk.Spinner()
-        self.sp_load_db.set_size_request(SPINNER_SIZE, SPINNER_SIZE)
+        self.sp_countries = gtk.Spinner()
+        self.sp_countries.set_size_request(SPINNER_SIZE, SPINNER_SIZE)
 
         self.countries_store = gtk.ListStore(gtk.gdk.Pixbuf, str, int)
-        tv_countries = self.create_tree_view()
-        tv_countries.set_model(self.countries_store)
-        selection = tv_countries.get_selection()
-        selection.connect("changed", self.countries_selection_changed)
-        sw_countries = self.create_scrolled_window()
-        sw_countries.add(tv_countries)
-        self.fr_countries = gtk.Frame("Countries")
-        self.fr_countries.set_size_request(LIST_SIZE, -1)
-        self.fr_countries.add(sw_countries)
-        self.fr_countries.show_all()
+        self.cb_countries = self.create_combo_box(self.countries_store)
+        self.cb_countries.show()
+
+        self.btn_countries_error = gtk.Button("Retry")
+        self.btn_countries_error.connect("clicked", self.btn_countries_error_clicked)
+
+        vb_countries = gtk.VBox(False, 1)
+        vb_countries.pack_start(self.sp_countries, False, False, 1)
+        vb_countries.pack_start(self.cb_countries, False, False, 1)
+        vb_countries.pack_start(self.btn_countries_error, False, False, 1)
+        vb_countries.show()
+        
+        fr_countries = gtk.Frame("Countries")
+        fr_countries.set_size_request(LIST_SIZE, -1)
+        fr_countries.add(vb_countries)
+        fr_countries.show()
 
         self.cities_store = gtk.ListStore(gtk.gdk.Pixbuf, str)
         tv_cities = self.create_tree_view()
@@ -57,12 +63,11 @@ class Gui(gtk.Window):
         fr_cities.set_size_request(LIST_SIZE, -1)
         fr_cities.add(sw_cities)
         fr_cities.show_all()
-        
-        btn_load_db_error = gtk.Button("Retry")
-        btn_load_db_error.connect("clicked", self.btn_load_db_error_clicked)
-        btn_load_db_error.show()
-        self.vb_load_db_error = gtk.VBox(False, 1)
-        self.vb_load_db_error.pack_start(btn_load_db_error, True, False, 10)
+
+        vb_left = gtk.VBox(False, 1)
+        vb_left.pack_start(fr_countries, False, False, 1)
+        vb_left.pack_start(fr_cities, True, True, 1)
+        vb_left.show()
         
         self.sp_info = gtk.Spinner()
         self.sp_info.set_size_request(SPINNER_SIZE, SPINNER_SIZE)
@@ -83,10 +88,7 @@ class Gui(gtk.Window):
         fr_info.show()
         
         hbox = gtk.HBox(False, 1)
-        hbox.pack_start(self.sp_load_db, True, False, 1)
-        hbox.pack_start(self.vb_load_db_error, True, False, 1)
-        hbox.pack_start(self.fr_countries, False, False, 1)
-        hbox.pack_start(fr_cities, False, False, 1)
+        hbox.pack_start(vb_left, False, False, 1)
         hbox.pack_start(fr_info, True, True, 1)
     
         self.add(hbox)
@@ -113,11 +115,25 @@ class Gui(gtk.Window):
         
         return tree_view
 
+    def create_combo_box(self, store):
+        combo_box = gtk.ComboBox(store)
+        
+        renderer_pixbuf = gtk.CellRendererPixbuf()
+        combo_box.pack_start(renderer_pixbuf, False)
+        combo_box.add_attribute(renderer_pixbuf, 'pixbuf', 0)
+
+        renderer_text = gtk.CellRendererText()
+        combo_box.pack_start(renderer_text, False)
+        combo_box.add_attribute(renderer_text, 'text', 1)
+
+        return combo_box
+        
+
     def on_destroy(self, widget):
         gtk.main_quit()
         
-    def btn_load_db_error_clicked(self, widget):
-        self.load_counries()
+    def btn_countries_error_clicked(self, widget):
+        self.load_countries()
 
     def create_scrolled_window(self):
         scrolled_window = gtk.ScrolledWindow()
@@ -126,21 +142,21 @@ class Gui(gtk.Window):
         return scrolled_window
 
     def show_loading_indicator(self):
-        self.sp_load_db.show()
-        self.sp_load_db.start()
-        self.fr_countries.hide()
-        self.vb_load_db_error.hide()
+        self.sp_countries.show()
+        self.sp_countries.start()
+        self.cb_countries.hide()
+        self.btn_countries_error.hide()
 
     def show_data(self):
-        self.sp_load_db.hide()
-        self.sp_load_db.stop()
-        self.fr_countries.show()
+        self.sp_countries.hide()
+        self.sp_countries.stop()
+        self.cb_countries.show()
 
     def show_error(self):
-        self.sp_load_db.hide()
-        self.sp_load_db.stop()
-        self.fr_countries.hide()
-        self.vb_load_db_error.show()
+        self.sp_countries.hide()
+        self.sp_countries.stop()
+        self.cb_countries.hide()
+        self.btn_countries_error.show()
 
     def add_to_countries_model(self, title, country_id):
         self.countries_store.append([self.COUNTRY_ICON, title, country_id])
