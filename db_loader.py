@@ -50,7 +50,8 @@ class DbLoader:
                 self.gui.add_to_cities_model, city)
 
     def create_tables(self):
-        self.cur.execute('CREATE TABLE countries (id INTEGER PRIMARY KEY, country TEXT) WITHOUT ROWID')
+        # remove WITHOUT ROWID for compatability with older system                     v
+        self.cur.execute('CREATE TABLE countries (id INTEGER PRIMARY KEY, country TEXT)')
         self.cur.execute('CREATE TABLE cities (city TEXT, country_id INTEGER, FOREIGN KEY(country_id) REFERENCES countries(id))')
 
     def get_data_from_net(self):
