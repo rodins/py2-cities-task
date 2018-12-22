@@ -38,11 +38,12 @@ class InfoLoader:
 
     def parse_response(self, response):
         js = json.load(response)
-        #print js['geonames'][0]['title']
         for item in js['geonames']:
-            title = item['title']
-            # City name should be first in title
-            if title.find(self.city) == 0:
-                return '<b>' + saxutils.escape(title) + '</b> \n\n <i>' + saxutils.escape(item['summary'])+ '</i>'
+            if item['feature'] == 'city':
+                return ('<b>' +
+                        saxutils.escape(item['title']) +
+                        '</b> \n\n <i>' +
+                        saxutils.escape(item['summary']) +
+                        '</i>')
         return "No info"
         
