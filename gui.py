@@ -9,12 +9,14 @@ import sys
 
 from async_task import AsyncTask
 from db_loader import DbLoader
+from info_loader import InfoLoader
 
 class Gui(gtk.Window):
     def __init__(self):
         super(Gui, self).__init__()
         
-        self.SPINNER_SIZE = 32
+        SPINNER_SIZE = 32
+        LIST_SIZE = 160
         self.connect("destroy", self.on_destroy)
         self.set_border_width(5)
         self.set_size_request(780, 400)
@@ -30,7 +32,7 @@ class Gui(gtk.Window):
         self.set_title("Cities info")
 
         self.sp_load_db = gtk.Spinner()
-        self.sp_load_db.set_size_request(self.SPINNER_SIZE, self.SPINNER_SIZE)
+        self.sp_load_db.set_size_request(SPINNER_SIZE, SPINNER_SIZE)
 
         self.countries_store = gtk.ListStore(gtk.gdk.Pixbuf, str, int)
         tv_countries = self.create_tree_view()
@@ -40,6 +42,7 @@ class Gui(gtk.Window):
         sw_countries = self.create_scrolled_window()
         sw_countries.add(tv_countries)
         self.fr_countries = gtk.Frame("Countries")
+        self.fr_countries.set_size_request(LIST_SIZE, -1)
         self.fr_countries.add(sw_countries)
         self.fr_countries.show_all()
 
@@ -50,6 +53,7 @@ class Gui(gtk.Window):
         sw_cities = self.create_scrolled_window()
         sw_cities.add(tv_cities)
         fr_cities = gtk.Frame("Cities")
+        fr_cities.set_size_request(LIST_SIZE, -1)
         fr_cities.add(sw_cities)
         fr_cities.show_all()
         
@@ -60,8 +64,9 @@ class Gui(gtk.Window):
         self.vb_load_db_error.pack_start(btn_load_db_error, True, False, 10)
         
         self.sp_info = gtk.Spinner()
-        self.sp_info.set_size_request(self.SPINNER_SIZE, self.SPINNER_SIZE)
+        self.sp_info.set_size_request(SPINNER_SIZE, SPINNER_SIZE)
         self.lb_info = gtk.Label("No info")
+        self.lb_info.set_line_wrap(True)
         self.lb_info.show()
         self.btn_info_error = gtk.Button("Retry")
         self.btn_info_error.connect("clicked", self.btn_info_error_clicked)
@@ -76,12 +81,12 @@ class Gui(gtk.Window):
         fr_info.add(vb_info)
         fr_info.show()
         
-        hbox = gtk.HBox(False, 5)
+        hbox = gtk.HBox(False, 1)
         hbox.pack_start(self.sp_load_db, True, False, 1)
         hbox.pack_start(self.vb_load_db_error, True, False, 1)
-        hbox.pack_start(self.fr_countries, True, True, 5)
-        hbox.pack_start(fr_cities, True, True, 5)
-        hbox.pack_start(fr_info, True, True, 5)
+        hbox.pack_start(self.fr_countries, False, False, 1)
+        hbox.pack_start(fr_cities, False, False, 1)
+        hbox.pack_start(fr_info, True, True, 1)
     
         self.add(hbox)
         hbox.show()
@@ -89,6 +94,8 @@ class Gui(gtk.Window):
 
         self.db_loader = DbLoader(self)
         self.load_countries()
+
+        self.info_loader = InfoLoader(self)
 
     def create_tree_view(self):
         tree_view = gtk.TreeView()
@@ -148,17 +155,27 @@ class Gui(gtk.Window):
         self.db_loader.country_id = country_id
         task = AsyncTask(self.db_loader)
         task.start()
+
+    def load_city_info(self, city):
+        self.info_loader.city = city
+        task = AsyncTask(self.info_loader)
+        task.start()
+
+    def retry_load_city_info(self):
+        task = AsyncTask(self.info_loader)
+        task.start()
         
     def countries_selection_changed(self, selection):
         model, countries_iter = selection.get_selected()
-        values = model.get(countries_iter, 2)
+        values = model.get(countries_iter, 1, 2)
+        self.info_loader.country = values[0]
         self.cities_store.clear()
-        self.load_cities(values[0])
+        self.load_cities(values[1]) # pass country_id
 
     def on_cities_activated(self, treeview, path, view_column):
         cities_iter = self.cities_store.get_iter(path)
         values = self.cities_store.get(cities_iter, 1)
-        print values[0]
+        self.load_city_info(values[0])
 
     def show_info_loading_indicator(self):
         self.sp_info.show()
@@ -179,6 +196,9 @@ class Gui(gtk.Window):
         self.btn_info_error.show()
 
     def btn_info_error_clicked(self, widget):
-        print "Info error"
+        self.retry_load_city_info()
+
+    def set_text_to_lb_info(self, text):
+        self.lb_info.set_markup(text)
         
         
