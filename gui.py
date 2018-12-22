@@ -20,8 +20,9 @@ class Gui(gtk.Window):
         self.connect("destroy", self.on_destroy)
         self.set_border_width(5)
         self.set_size_request(780, 400)
-        #TODO: set application image
         try:
+            self.set_icon_from_file(
+                os.path.join(sys.path[0], "images", "city-64.png"))
             self.COUNTRY_ICON = gtk.gdk.pixbuf_new_from_file(
                 os.path.join(sys.path[0], "images", "countries-16.png"))
 
