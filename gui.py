@@ -17,6 +17,8 @@ class Gui(gtk.Window):
         
         SPINNER_SIZE = 32
         LIST_SIZE = 210
+        self.LABEL_NO_INFO = 'No info'
+        
         self.connect("destroy", self.on_destroy)
         self.set_border_width(5)
         self.set_size_request(780, 400)
@@ -71,7 +73,7 @@ class Gui(gtk.Window):
         
         self.sp_info = gtk.Spinner()
         self.sp_info.set_size_request(SPINNER_SIZE, SPINNER_SIZE)
-        self.lb_info = gtk.Label("No info")
+        self.lb_info = gtk.Label(self.LABEL_NO_INFO)
         self.lb_info.set_line_wrap(True)
         self.lb_info.show()
         btn_info_error = gtk.Button("Retry")

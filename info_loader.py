@@ -44,15 +44,18 @@ class InfoLoader:
 
     def parse_response(self, response):
         js = json.load(response)
-        for item in js['geonames']:
-            if self.is_feature_city(item):
-                return ('<b>' +
-                        saxutils.escape(item['title']) +
-                        '</b> \n\n <i>' +
-                        saxutils.escape(item['summary']) +
-                        '</i> \n\n Latitude: ' +
-                        str(item['lat']) +
-                        ' \n Longitude: ' +
-                        str(item['lng']))
-        return "No info"
+        try:
+            for item in js['geonames']:
+                if self.is_feature_city(item):
+                    return ('<b>' +
+                            saxutils.escape(item['title']) +
+                            '</b> \n\n <i>' +
+                            saxutils.escape(item['summary']) +
+                            '</i> \n\n Latitude: ' +
+                            str(item['lat']) +
+                            ' \n Longitude: ' +
+                            str(item['lng']))
+        except:
+            return self.gui.LABEL_NO_INFO
+        return self.gui.LABEL_NO_INFO
         
