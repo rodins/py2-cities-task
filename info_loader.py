@@ -50,6 +50,9 @@ class InfoLoader:
                         saxutils.escape(item['title']) +
                         '</b> \n\n <i>' +
                         saxutils.escape(item['summary']) +
-                        '</i>')
+                        '</i> \n\n Latitude: ' +
+                        str(item['lat']) +
+                        ' \n Longitude: ' +
+                        str(item['lng']))
         return "No info"
         
