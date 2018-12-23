@@ -74,13 +74,16 @@ class Gui(gtk.Window):
         self.lb_info = gtk.Label("No info")
         self.lb_info.set_line_wrap(True)
         self.lb_info.show()
-        self.btn_info_error = gtk.Button("Retry")
-        self.btn_info_error.connect("clicked", self.btn_info_error_clicked)
+        btn_info_error = gtk.Button("Retry")
+        btn_info_error.connect("clicked", self.btn_info_error_clicked)
+        btn_info_error.show()
+        self.hb_info_error = gtk.HBox(False, 1)
+        self.hb_info_error.pack_start(btn_info_error, True, False, 1)
         
         vb_info = gtk.VBox(False, 1)
         vb_info.pack_start(self.sp_info, True, False, 1)
         vb_info.pack_start(self.lb_info, True, True, 1)
-        vb_info.pack_start(self.btn_info_error, True, False, 1)
+        vb_info.pack_start(self.hb_info_error, True, False, 1)
         vb_info.show()
         
         fr_info = gtk.Frame("Info")
@@ -197,19 +200,19 @@ class Gui(gtk.Window):
         self.sp_info.show()
         self.sp_info.start()
         self.lb_info.hide()
-        self.btn_info_error.hide()
+        self.hb_info_error.hide()
 
     def show_info_data(self):
         self.sp_info.hide()
         self.sp_info.stop()
         self.lb_info.show()
-        self.btn_info_error.hide()
+        self.hb_info_error.hide()
 
     def show_info_error(self):
         self.sp_info.hide()
         self.sp_info.stop()
         self.lb_info.hide()
-        self.btn_info_error.show()
+        self.hb_info_error.show()
 
     def btn_info_error_clicked(self, widget):
         self.retry_load_city_info()
