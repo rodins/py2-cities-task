@@ -16,7 +16,7 @@ class Gui(gtk.Window):
         super(Gui, self).__init__()
         
         SPINNER_SIZE = 32
-        LIST_SIZE = 160
+        LIST_SIZE = 210
         self.connect("destroy", self.on_destroy)
         self.set_border_width(5)
         self.set_size_request(780, 400)
