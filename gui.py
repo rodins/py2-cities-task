@@ -81,9 +81,12 @@ class Gui(gtk.Window):
         btn_info_error.show()
         self.hb_info_error = gtk.HBox(False, 1)
         self.hb_info_error.pack_start(btn_info_error, True, False, 1)
+
+        self.im_info = gtk.Image()
         
         vb_info = gtk.VBox(False, 1)
         vb_info.pack_start(self.sp_info, True, False, 1)
+        vb_info.pack_start(self.im_info, True, True, 1)
         vb_info.pack_start(self.lb_info, True, True, 1)
         vb_info.pack_start(self.hb_info_error, True, False, 1)
         vb_info.show()
@@ -201,6 +204,7 @@ class Gui(gtk.Window):
     def show_info_loading_indicator(self):
         self.sp_info.show()
         self.sp_info.start()
+        self.im_info.hide()
         self.lb_info.hide()
         self.hb_info_error.hide()
 
@@ -221,5 +225,9 @@ class Gui(gtk.Window):
 
     def set_text_to_lb_info(self, text):
         self.lb_info.set_markup(text)
+
+    def set_info_image(self, pixbuf):
+        self.im_info.show()
+        self.im_info.set_from_pixbuf(pixbuf)
         
         
