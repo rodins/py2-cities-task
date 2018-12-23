@@ -86,8 +86,8 @@ class Gui(gtk.Window):
         
         vb_info = gtk.VBox(False, 1)
         vb_info.pack_start(self.sp_info, True, False, 1)
-        vb_info.pack_start(self.im_info, True, True, 1)
-        vb_info.pack_start(self.lb_info, True, True, 1)
+        vb_info.pack_start(self.im_info, True, False, 1)
+        vb_info.pack_start(self.lb_info, True, False, 1)
         vb_info.pack_start(self.hb_info_error, True, False, 1)
         vb_info.show()
         
