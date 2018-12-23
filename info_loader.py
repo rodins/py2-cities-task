@@ -36,10 +36,16 @@ class InfoLoader:
                 gobject.idle_add(self.gui.show_info_error)
                 print ex
 
+    def is_feature_city(self, item):
+        try:
+            return item['feature'] == 'city'
+        except:
+            return item['title'].find(self.city) == 0
+
     def parse_response(self, response):
         js = json.load(response)
         for item in js['geonames']:
-            if item['feature'] == 'city':
+            if self.is_feature_city(item):
                 return ('<b>' +
                         saxutils.escape(item['title']) +
                         '</b> \n\n <i>' +
