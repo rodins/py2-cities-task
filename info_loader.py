@@ -6,7 +6,7 @@ import urllib2
 import json
 from xml.sax import saxutils
 
-from image_task import ImageTask
+from image_loader import ImageLoader
 
 class InfoLoader:
     def __init__(self, gui):
@@ -44,16 +44,19 @@ class InfoLoader:
         except:
             return item['title'].find(self.city) == 0
 
-    def load_image(self, link):
-        task = ImageTask(self.gui, link)
-        task.start()
+    def load_image(self, item):
+        try:  
+            loader = ImageLoader(self.gui, item['thumbnailImg'])
+            loader.load()
+        except Exception as ex:
+            print ex
 
     def parse_response(self, response):
         js = json.load(response)
         try:
             for item in js['geonames']:
                 if self.is_feature_city(item):
-                    self.load_image(item['thumbnailImg'])
+                    self.load_image(item)
                     return ('<b>' +
                             saxutils.escape(item['title']) +
                             '</b> \n\n <i>' +
@@ -62,7 +65,8 @@ class InfoLoader:
                             str(item['lat']) +
                             ' \n Longitude: ' +
                             str(item['lng']))
-        except:
+        except Exception as ex:
+            print ex
             return self.gui.LABEL_NO_INFO
         return self.gui.LABEL_NO_INFO
         
