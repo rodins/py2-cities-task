@@ -3,7 +3,6 @@
 import gtk
 import gobject
 
-import threading
 import urllib2
 
 class ImageLoader():
