@@ -67,6 +67,5 @@ class InfoLoader:
                             str(item['lng']))
         except Exception as ex:
             print ex
-            return self.gui.LABEL_NO_INFO
         return self.gui.LABEL_NO_INFO
         
